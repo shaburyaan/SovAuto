@@ -148,6 +148,29 @@ function Update-SovAutoGitHubMetadata {
     }
 }
 
+function Resolve-SovAutoBootstrapMergeConflict {
+    $conflicts = git -C $script:RepoRoot diff --name-only --diff-filter=U
+    if ($LASTEXITCODE -ne 0) {
+        throw "git conflict inspection failed."
+    }
+    if (@($conflicts).Count -eq 1 -and $conflicts[0] -eq "README.md") {
+        git -C $script:RepoRoot checkout --ours -- README.md
+        if ($LASTEXITCODE -ne 0) {
+            throw "git checkout --ours README.md failed."
+        }
+        git -C $script:RepoRoot add README.md
+        if ($LASTEXITCODE -ne 0) {
+            throw "git add README.md failed."
+        }
+        git -C $script:RepoRoot commit --no-edit
+        if ($LASTEXITCODE -ne 0) {
+            throw "git merge commit failed."
+        }
+        return
+    }
+    throw "git pull failed."
+}
+
 function pushAuto {
     [CmdletBinding()]
     param(
@@ -183,7 +206,7 @@ function pushAuto {
         if ($remoteMain) {
             git -C $script:RepoRoot pull origin main --allow-unrelated-histories --no-rebase --no-edit
             if ($LASTEXITCODE -ne 0) {
-                throw "git pull failed."
+                Resolve-SovAutoBootstrapMergeConflict
             }
         }
 
