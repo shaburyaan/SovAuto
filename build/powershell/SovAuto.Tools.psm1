@@ -171,6 +171,14 @@ function Resolve-SovAutoBootstrapMergeConflict {
     throw "git pull failed."
 }
 
+function Get-SovAutoPushUrl {
+    $token = (gh auth token).Trim()
+    if (-not $token) {
+        throw "GitHub token is not available."
+    }
+    return "https://x-access-token:$token@github.com/shaburyaan/SovAuto.git"
+}
+
 function pushAuto {
     [CmdletBinding()]
     param(
@@ -210,7 +218,8 @@ function pushAuto {
             }
         }
 
-        git -C $script:RepoRoot push -u origin main
+        $pushUrl = Get-SovAutoPushUrl
+        git -C $script:RepoRoot push -u $pushUrl main:main
         if ($LASTEXITCODE -ne 0) {
             throw "git push failed."
         }
