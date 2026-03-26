@@ -1,0 +1,39 @@
+﻿[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sovauto"
+version = "1.0.3"
+description = "Windows desktop application for capturing live 1C windows, recording reusable scenarios, and replaying them with controlled delays. / Windows-приложение для захвата окон 1С, записи сценариев и их воспроизведения с управляемыми задержками."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "PyQt6>=6.7",
+  "pynput>=1.7.7",
+  "mss>=9.0.1",
+  "opencv-python>=4.10.0.84",
+  "numpy>=1.26,<2.0",
+  "pillow>=10.4.0",
+  "pytesseract>=0.3.13",
+  "pywin32>=306",
+  "pywinauto>=0.6.8",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pyinstaller>=6.11.0",
+  "pytest>=8.3.0",
+  "pytest-qt>=4.4.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+

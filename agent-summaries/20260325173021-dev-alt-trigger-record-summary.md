@@ -1,0 +1,4 @@
+- recorder: `ActionRecorder` now records by `ALT`, debounces held `ALT`, keeps `F8/ESC` stop path, and ignores `ЛКМ/ПКМ`
+- ux: recording overlay now says `Наведи курсор и нажми ALT для записи шага`; playback overlay now renders centered countdown, yellow preview circle, and `Бот завершил работу`
+- persistence/tests: scenario name flow preserved, confirm copy updated, focused regression suite passed `21/21`
+- live gate: attempted fresh `python main.py` + new `output/live_alt_record_gate.py`, but this automation session hit `main.py exit_code 3221225477` and title collision with Explorer `SovAuto`, so real ALT runtime gate remains blocked outside interactive desktop control

@@ -1,0 +1,64 @@
+# RUNBOOK
+
+- 202603231100 init project scaffold
+- 202603231640 source app boots with splash and runtime bootstrap
+- 202603231643 pyinstaller build ok -> dist/SovAuto
+- 202603231650 inno setup build ok -> Output/SovAuto-Setup-1.0.0.exe
+- 202603231646 pytest ok -> 3 passed
+- 202603231658 installer smoke ok -> Program Files install, launch, uninstall keep-data
+- 202603231701 installer cleanup ok -> uninstall with /DELETEUSERDATA=1 removed AppData
+- 202603231705 tesseract installed + synthetic OCR smoke ok (12345 -> 12346 drift observed)
+- 202603240900 source app smoke ok -> splash, new shell, onboarding stable after overlay/hotkey hardening
+- 202603240900 pytest ok -> 6 passed
+- 202603240905 pyinstaller rebuild ok -> dist/SovAuto
+- 202603240905 packaged exe smoke ok -> dist/SovAuto/SovAuto.exe started and stayed alive
+- 202603240906 installer rebuild ok -> Output/SovAuto-Setup-1.0.0.exe
+- 202603240906 1C runtime verification blocked -> 1cv8.exe not found in standard install paths on current machine
+- 202603241008 runtime bind ok -> autodetect found C:\Program Files\1cv8\8.3.24.1548\bin\1cv8.exe
+- 202603241016 live embed ok -> SovAuto launched 1C, top-level 1C windows absent, child HWNDs hosted inside SovAuto
+- 202603241016 child tracking ok -> embedded windows included 1С:Предприятие and Доступ к информационной базе
+- 202603241018 profile refresh ok -> runtime updated last window title/base hint while 1C dialog flow advanced
+- 202603241019 pytest ok -> 6 passed after PID/embed/lifecycle fixes
+- 202603241041 shell stabilize ok -> SovAuto starts maximized, host area freed, logs moved to drawer overlay
+- 202603241043 live embed stabilize ok -> no instant fallback, visible top-level 1C window absent, primary HWND hosted as child of SovAuto
+- 202603241045 primary switch ok -> 1C advanced from launcher to loading/login windows with one controlled primary HWND switch
+- 202603241046 lifecycle rerun ok -> killed 1C -> SovAuto stayed alive -> stopped state -> second launch embedded again
+- 202603241111 login shell tighten ok -> host-first shell, logs moved out of 1C area, no forced focus path in normal attach flow
+- 202603241112 embedded login child ok -> 1C chooser stayed inside SovAuto, login dialog rehosted as child without visible external top-level window
+- 202603241113 stopped rerun ok -> taskkilled 1C, SovAuto stayed alive, logged stopped, manual relaunch embedded again
+- 202603241354 async launch wait ok -> 1C window detection moved off blocking UI path, pytest 6 passed
+- 202603241358 packaged login cancel ok -> embedded login window closed, SovAuto stayed alive on dist/SovAuto/SovAuto.exe
+- 202603241400 ibases bind ok -> detected standard %APPDATA%\1C\1CEStart\ibases.v8i with bases SOVUT and ФТ for repeat-run profile args
+- 202603241406 packaged rebuild ok -> dist/SovAuto rebuilt after async/profile memory changes
+- 202603250923 packaged crash traced -> ibases.v8i BOM triggered MissingSectionHeaderError during runtime profile refresh
+- 202603250923 ibases bom fix ok -> launcher now reads utf-8-sig ibases.v8i, pytest 7 passed
+- 202603250923 packaged launcher embed ok -> real 1C launcher rendered inside SovAuto, no external top-level 1C window observed
+- 202603250923 packaged profile memory partial ok -> embedded session captured base_hint SOVUT and launch_arguments /IBName SOVUT
+- 202603250923 packaged enterprise transition blocked -> direct embedded Enterprise invoke left SovAuto window not responding, full live gate still open
+- 202603251052 mainpy launch chain fixed -> runtime primary selection widened for launcher/loading/login, spawned pid tracking added, pytest 10 passed
+- 202603251052 mainpy repeat-run partial ok -> fresh python main.py auto-started /IBName SOVUT and re-embedded launcher inside SovAuto
+- 202603251052 mainpy embedded login reached -> source runtime advanced to Загрузка конфигурационной информации and Доступ к информационной базе inside SovAuto with no visible external top-level 1C window
+- 202603251052 mainpy login submit still open -> embedded login dialog visible inside SovAuto, but full enter/work/close/reopen live gate not yet proven
+- 202603251154 mainpy login stability better -> fresh python main.py kept login dialog inside SovAuto without prior jump/flicker repro during launcher -> loading -> login path
+- 202603251154 mainpy dead-hwnd guard better -> fresh python main.py run showed launcher -> loading primary switch with no new GetParent invalid-hwnd crash entry in app.log
+- 202603251156 mainpy embedded password input ok -> password characters rendered inside embedded 1C login, but working 1C window after submit still not yet proven
+- 202603251411 external Sovut login ok -> 1C reached working top-level window "Управление торговлей, редакция 11" before any SovAuto capture
+- 202603251413 mainpy manual capture ok -> fresh python main.py attached working hwnd 2230356, external top-level 1C window disappeared, working 1C rendered inside SovAuto
+- 202603251415 embedded safe navigation ok -> inside captured 1C, harmless tab transitions CRM и маркетинг -> Продажи -> Закупки -> Склад и доставка changed content and no external top-level 1C window reappeared
+- 202603251416 pytest ok -> 12 passed after working-window finder priority fix
+- 202603251531 record playback code wired -> recorder/player/scenario storage/dialog flow landed in main.py runtime, record button changed to left-click start-stop and right-click mode switch
+- 202603251531 pytest ok -> 7 passed for record/player/manual-capture coverage after record playback wiring
+- 202603251531 live record playback partial -> fresh external Sovut login and fresh main.py capture repeated ok; embedded recording reached navigation confirm and input dialog, but full record -> save -> run -> playback gate stayed open because live automation hit inconsistent SovAuto/embedded descendant visibility after capture
+- 202603251616 local 1c shortcut ok -> created C:\Users\MLDev\Desktop\SovAuto\SovAuto 1C.lnk pointing to C:\Program Files\1cv8\8.3.24.1548\bin\1cv8.exe with /IBName SOVUT
+- 202603251616 startup shortcut bootstrap ok -> app now auto-creates/refreshes local SovAuto 1C shortcut and persists onec_manual_path for current user install
+- 202603251616 manual attach filter tightened ok -> attach_existing_onec now filters windows by saved 1cv8.exe path, pytest 10 passed for shortcut/manual-capture/record-player coverage
+- 202603251636 minimized manual capture ok -> working 1C launched from SovAuto shortcut, manually minimized to taskbar, fresh python main.py restored/found hwnd 2033076 and embedded it into SovAuto
+- 202603251656 record stop hotkeys ok -> recorder now stops on global F8/ESC, UI got F6/F8/F9 shortcuts, save success/error toast variants landed, pytest 17 passed
+- 202603251656 live stop gate blocked -> runtime automation script reached SovAuto selection but pywinauto click_input failed in this agent session with no active desktop, so real mouse-driven F8 gate still needs interactive rerun on user desktop
+- 202603251733 alt trigger record ok -> recorder switched to ALT capture with debounce, ЛКМ/ПКМ ignored by recorder, overlay copy updated, playback now uses countdown/preview/completion phases, pytest 21 passed
+- 202603251733 alt live gate blocked -> fresh python main.py in this automation session exited 3221225477 before stable UI automation; pywinauto also collided with Explorer window titled SovAuto, so real ALT runtime gate still needs interactive desktop rerun
+- 202603260925 playback focus fixes code ok -> overlay no-focus/no-activate, strict scenario name, return-to-home before playback, pre-focus/rect guards, separate playback/completion indicator states landed; pytest 25 passed, live gate advanced through real 1C launcher/login/work window but detached SovAuto capture still stayed on manual-capture screen so final embedded playback gate remains open
+- 202603261337 runtime cycle code ok -> Windows overlay got native no-activate/transparent styles, player now uses configurable slow delay with legacy 300ms migration to 4s, foreground focus path strengthened, playback/record auto-restore existing 1C after restart landed, pytest 28 passed
+- 202603261337 runtime cycle live partial -> clean live chain reached direct 1C ENTERPRISE work window and fresh python main.py runtime window, but in this agent desktop session pywinauto UIA button activation on Qt SovAuto controls did not reach attach slot, so final capture -> record -> save -> reopen -> run gate remains blocked by live desktop interaction layer rather than current code tests
+- 202603261540 build commands code ok -> release flow now bundles storage migrations, splash assets, Tesseract runtime and fail-fast build/installer scripts; current-user PowerShell 5.1/7 modules export buildAuto and pushAutp; version flow syncs version.txt, pyproject.toml and SovAuto.iss
+- 202603261540 build commands smoke ok -> buildAuto 1.0.1 produced dist\SovAuto\SovAuto.exe, dist_installer\SovAuto-Setup-1.0.1.exe and desktop folder C:\Users\MLDev\Desktop\SovAuto-Installer-1.0.1; silent install to C:\Users\MLDev\AppData\Local\Temp\SovAutoSmokeInstall succeeded and launched installed SovAuto.exe with existing AppData runtime paths present

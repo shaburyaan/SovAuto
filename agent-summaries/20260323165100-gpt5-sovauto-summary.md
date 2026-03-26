@@ -1,0 +1,11 @@
+- scaffold done
+- source run ok
+- runtime metadata/log bootstrap ok
+- pytest ok (3 passed)
+- pyinstaller build ok
+- inno setup compile ok
+- install ok -> Program Files
+- uninstall keep-data ok
+- uninstall cleanup ok
+- tesseract runtime installed
+- synthetic OCR smoke ok with numeric drift risk

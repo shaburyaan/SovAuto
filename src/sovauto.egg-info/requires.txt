@@ -1,0 +1,14 @@
+PyQt6>=6.7
+pynput>=1.7.7
+mss>=9.0.1
+opencv-python>=4.10.0.84
+numpy<2.0,>=1.26
+pillow>=10.4.0
+pytesseract>=0.3.13
+pywin32>=306
+pywinauto>=0.6.8
+
+[dev]
+pyinstaller>=6.11.0
+pytest>=8.3.0
+pytest-qt>=4.4.0

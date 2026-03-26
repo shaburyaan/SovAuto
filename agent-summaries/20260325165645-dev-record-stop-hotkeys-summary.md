@@ -1,0 +1,4 @@
+- recorder stop path: `ActionRecorder` now starts/stops mouse+keyboard listeners and emits `stop_requested` on global `F8/ESC`
+- controller/ui: finish-recording flow moved to `AppController`/`AppWindow`, playback-vs-record guards added, `F6/F8/F9` shortcuts and stop-hint overlay shipped
+- feedback/tests: toast supports `success/error/default`, save flow emits green `Конфиг сохранен` or red error reason, focused pytest suite passed `17/17`
+- live gate: attempted runtime script against real `python main.py`, but this agent session has no active desktop for `pywinauto` mouse input, so final interactive stop gate remains to rerun on a real desktop session

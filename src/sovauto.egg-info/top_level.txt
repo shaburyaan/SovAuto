@@ -1,0 +1,7 @@
+core
+hooks
+ocr
+sovauto
+storage
+ui
+utils
