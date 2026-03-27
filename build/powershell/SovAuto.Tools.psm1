@@ -171,12 +171,17 @@ function Resolve-SovAutoBootstrapMergeConflict {
     throw "git pull failed."
 }
 
-function Get-SovAutoPushUrl {
-    $token = (gh auth token).Trim()
-    if (-not $token) {
-        throw "GitHub token is not available."
+function Invoke-SovAutoGitHubMetadataUpdate {
+    try {
+        $permission = (gh repo view $script:RepoSlug --json viewerPermission --jq '.viewerPermission').Trim()
+        if ($permission -notin @("ADMIN", "WRITE", "MAINTAIN")) {
+            Write-Warning "git push completed, but GitHub metadata update was skipped. Current gh permission: $permission"
+            return
+        }
+        Update-SovAutoGitHubMetadata
+    } catch {
+        Write-Warning "git push completed, but gh repo edit failed: $_"
     }
-    return "https://x-access-token:$token@github.com/shaburyaan/SovAuto.git"
 }
 
 function pushAuto {
@@ -194,9 +199,13 @@ function pushAuto {
     Push-Location $script:RepoRoot
     try {
         Initialize-SovAutoGitRepo
-        $remoteMain = git ls-remote --heads origin main
+        $status = git -C $script:RepoRoot status --porcelain
+        if ([string]::IsNullOrWhiteSpace($status)) {
+            Write-Host "No changes to commit."
+            return
+        }
 
-        git -C $script:RepoRoot add .
+        git -C $script:RepoRoot add -A
         if ($LASTEXITCODE -ne 0) {
             throw "git add failed."
         }
@@ -211,20 +220,25 @@ function pushAuto {
             }
         }
 
-        if ($remoteMain) {
-            git -C $script:RepoRoot pull origin main --allow-unrelated-histories --no-rebase --no-edit
+        $branch = (git -C $script:RepoRoot rev-parse --abbrev-ref HEAD).Trim()
+        if (-not $branch -or $branch -eq "HEAD") {
+            throw "Current git branch could not be determined."
+        }
+
+        $remoteBranch = git ls-remote --heads origin $branch
+        if ($remoteBranch) {
+            git -C $script:RepoRoot pull origin $branch --allow-unrelated-histories --no-rebase --no-edit
             if ($LASTEXITCODE -ne 0) {
                 Resolve-SovAutoBootstrapMergeConflict
             }
         }
 
-        $pushUrl = Get-SovAutoPushUrl
-        git -C $script:RepoRoot push -u $pushUrl main:main
+        git -C $script:RepoRoot push -u origin $branch
         if ($LASTEXITCODE -ne 0) {
             throw "git push failed."
         }
 
-        Update-SovAutoGitHubMetadata
+        Invoke-SovAutoGitHubMetadataUpdate
     } finally {
         Pop-Location
     }
